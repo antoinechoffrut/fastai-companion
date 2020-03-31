@@ -132,7 +132,7 @@ window.onload = wrap_img;
     <ul class="section-nav">
 <li class="toc-entry toc-h2"><a href="#Tools-and-references">Tools and references </a>
 <ul>
-<li class="toc-entry toc-h3"><a href="#Python-modules:">Python modules: </a></li>
+<li class="toc-entry toc-h3"><a href="#Python-modules">Python modules </a></li>
 <li class="toc-entry toc-h3"><a href="#Utilities">Utilities </a></li>
 <li class="toc-entry toc-h3"><a href="#Helpful-commands">Helpful commands </a></li>
 <li class="toc-entry toc-h3"><a href="#Useful-references">Useful references </a></li>
@@ -141,17 +141,37 @@ window.onload = wrap_img;
 <li class="toc-entry toc-h2"><a href="#Environment">Environment </a>
 <ul>
 <li class="toc-entry toc-h3"><a href="#System">System </a></li>
-<li class="toc-entry toc-h3"><a href="#Virtual-environments">Virtual environments </a></li>
-<li class="toc-entry toc-h3"><a href="#Python-version">Python version </a></li>
-<li class="toc-entry toc-h3"><a href="#Package-installation">Package installation </a></li>
-<li class="toc-entry toc-h3"><a href="#List-of-packages">List of packages </a></li>
-<li class="toc-entry toc-h3"><a href="#Package-versions">Package versions </a></li>
-<li class="toc-entry toc-h3"><a href="#Locating-the-Python-install">Locating the Python install </a></li>
+<li class="toc-entry toc-h3"><a href="#Virtual-environments-(with-pyenv)">Virtual environments (with pyenv) </a></li>
+<li class="toc-entry toc-h3"><a href="#Python-version">Python version </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Using-the-sys-module">Using the sys module </a></li>
+<li class="toc-entry toc-h4"><a href="#Using-the-platform-module">Using the platform module </a></li>
+<li class="toc-entry toc-h4"><a href="#A-convoluted-alternative">A convoluted alternative </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h3"><a href="#Installed-packages">Installed packages </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#List-of-all-packlages-with-pip">List of all packlages with pip </a></li>
+<li class="toc-entry toc-h4"><a href="#Check-specific-packages">Check specific packages </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h3"><a href="#Package-versions">Package versions </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Using-the-__version__-attribute">Using the __version__ attribute </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h3"><a href="#Locating-the-Python-install">Locating the Python install </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Using-sys">Using sys </a></li>
+<li class="toc-entry toc-h4"><a href="#Using-!which-(Unix-like-systems)">Using !which (Unix-like systems) </a></li>
+<li class="toc-entry toc-h4"><a href="#Using-!pyenv-which">Using !pyenv which </a></li>
+</ul>
+</li>
 <li class="toc-entry toc-h3"><a href="#Locating-packages">Locating packages </a>
 <ul>
-<li class="toc-entry toc-h4"><a href="#Example-with-numpy">Example with numpy </a></li>
-<li class="toc-entry toc-h4"><a href="#Example-with-fastai2">Example with fastai2 </a></li>
-<li class="toc-entry toc-h4"><a href="#Search-path-for-modules">Search path for modules </a></li>
+<li class="toc-entry toc-h4"><a href="#Read-the-__path__-attribute">Read the __path__ attribute </a></li>
+<li class="toc-entry toc-h4"><a href="#Using-!pip-show">Using !pip show </a></li>
+<li class="toc-entry toc-h4"><a href="#Search-path-for-modules:-sys.path">Search path for modules: sys.path </a></li>
 <li class="toc-entry toc-h4"><a href="#List-of-all-global-site-packages-directories">List of all global site-packages directories </a></li>
 </ul>
 </li>
@@ -176,6 +196,7 @@ window.onload = wrap_img;
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<hr>
 <p>This notebook shows how to find information about your system such as:</p>
 <ul>
 <li>OS information</li>
@@ -207,8 +228,8 @@ window.onload = wrap_img;
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Python-modules:">
-<a class="anchor" href="#Python-modules:" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>Python</code> modules:<a class="anchor-link" href="#Python-modules:"> </a>
+<h3 id="Python-modules">
+<a class="anchor" href="#Python-modules" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>Python</code> modules<a class="anchor-link" href="#Python-modules"> </a>
 </h3>
 <ul>
 <li><code>sys</code></li>
@@ -247,6 +268,7 @@ window.onload = wrap_img;
 <li>
 <a href="https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory/46071447#46071447">How do I find the location of my python site packages directory?</a> (stackoverflow)</li>
 </ul>
+<hr>
 
 </div>
 </div>
@@ -274,11 +296,15 @@ window.onload = wrap_img;
     
     
 <div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
 <div class="input">
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">platform</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+<span class="kn">import</span> <span class="nn">platform</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Platform: </span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Details:"</span><span class="p">)</span>
@@ -294,6 +320,7 @@ window.onload = wrap_img;
 </div>
 </div>
 
+    </details>
 <div class="output_wrapper">
 <div class="output">
 
@@ -322,8 +349,8 @@ Mac OS version: ('10.15.4', ('', '', ''), 'x86_64')
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Virtual-environments">
-<a class="anchor" href="#Virtual-environments" aria-hidden="true"><span class="octicon octicon-link"></span></a>Virtual environments<a class="anchor-link" href="#Virtual-environments"> </a>
+<h3 id="Virtual-environments-(with-pyenv)">
+<a class="anchor" href="#Virtual-environments-(with-pyenv)" aria-hidden="true"><span class="octicon octicon-link"></span></a>Virtual environments (with <code>pyenv</code>)<a class="anchor-link" href="#Virtual-environments-(with-pyenv)"> </a>
 </h3>
 <p>I use <code>pyenv</code> to manage <code>Python</code> versions, and the extension <code>pyenv-virtualenv</code> to manage virtual environments.</p>
 <p>To check which virtual environment is activated (with <code>pyenv</code>):</p>
@@ -338,7 +365,7 @@ Mac OS version: ('10.15.4', ('', '', ''), 'x86_64')
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># !pyenv version</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pyenv version
 </pre></div>
 
     </div>
@@ -357,24 +384,37 @@ Mac OS version: ('10.15.4', ('', '', ''), 'x86_64')
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Using-the-sys-module">
+<a class="anchor" href="#Using-the-sys-module" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the <code>sys</code> module<a class="anchor-link" href="#Using-the-sys-module"> </a>
+</h4>
+</div>
+</div>
+</div>
     
     
 <div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
 <div class="input">
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Using the `sys` module</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
-<span class="c1"># print(f"Python: version {'.'.join([str(item) for item in sys.version_info[0:3]])}")</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+<span class="c1"># print(sys.version_info)</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
+    </details>
 <div class="output_wrapper">
 <div class="output">
 
@@ -393,18 +433,29 @@ Mac OS version: ('10.15.4', ('', '', ''), 'x86_64')
 </div>
     
 
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Using-the-platform-module">
+<a class="anchor" href="#Using-the-platform-module" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the <code>platform</code> module<a class="anchor-link" href="#Using-the-platform-module"> </a>
+</h4>
+</div>
+</div>
+</div>
     
     
 <div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
 <div class="input">
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Using the `platform` module</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
 <span class="kn">import</span> <span class="nn">platform</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Python: version </span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">python_version</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Python build: </span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">python_build</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 
@@ -412,6 +463,7 @@ Mac OS version: ('10.15.4', ('', '', ''), 'x86_64')
 </div>
 </div>
 
+    </details>
 <div class="output_wrapper">
 <div class="output">
 
@@ -430,6 +482,15 @@ Python build: ('default', 'Mar 30 2020 15:12:05')
 </div>
     
 
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="A-convoluted-alternative">
+<a class="anchor" href="#A-convoluted-alternative" aria-hidden="true"><span class="octicon octicon-link"></span></a>A convoluted alternative<a class="anchor-link" href="#A-convoluted-alternative"> </a>
+</h4>
+</div>
+</div>
+</div>
     
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -437,36 +498,21 @@ Python build: ('default', 'Mar 30 2020 15:12:05')
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Convoluted alternative</span>
-<span class="o">!</span>python --version
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>python --version
 </pre></div>
 
     </div>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Python 3.8.1
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
     
 
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Package-installation">
-<a class="anchor" href="#Package-installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Package installation<a class="anchor-link" href="#Package-installation"> </a>
+<h3 id="Installed-packages">
+<a class="anchor" href="#Installed-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installed packages<a class="anchor-link" href="#Installed-packages"> </a>
 </h3>
 </div>
 </div>
@@ -474,9 +520,9 @@ Python build: ('default', 'Mar 30 2020 15:12:05')
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="List-of-packages">
-<a class="anchor" href="#List-of-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>List of packages<a class="anchor-link" href="#List-of-packages"> </a>
-</h3>
+<h4 id="List-of-all-packlages-with-pip">
+<a class="anchor" href="#List-of-all-packlages-with-pip" aria-hidden="true"><span class="octicon octicon-link"></span></a>List of all packlages with <code>pip</code><a class="anchor-link" href="#List-of-all-packlages-with-pip"> </a>
+</h4>
 </div>
 </div>
 </div>
@@ -487,8 +533,7 @@ Python build: ('default', 'Mar 30 2020 15:12:05')
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Packages installed with `pip`</span>
-<span class="c1"># !pip freeze # uncomment to obtain long list</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip freeze
 </pre></div>
 
     </div>
@@ -506,6 +551,17 @@ Python build: ('default', 'Mar 30 2020 15:12:05')
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Check-specific-packages">
+<a class="anchor" href="#Check-specific-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Check specific packages<a class="anchor-link" href="#Check-specific-packages"> </a>
+</h4>
+<p>Check that <code>fastai2</code> is installed</p>
+
+</div>
+</div>
+</div>
     
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -513,8 +569,7 @@ Python build: ('default', 'Mar 30 2020 15:12:05')
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Check `fastai2` is installed</span>
-<span class="o">!</span>pip freeze <span class="p">|</span> grep fastai2
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip freeze <span class="p">|</span> grep fastai2
 </pre></div>
 
     </div>
@@ -541,7 +596,7 @@ Python build: ('default', 'Mar 30 2020 15:12:05')
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Otherwise, packages installed via <code>pip</code> are listed as usual:</p>
+<p>Otherwise, packages installed via <code>pip</code> are listed as usual.  Check that (e.g.). <code>numpy</code> is installed:</p>
 
 </div>
 </div>
@@ -553,8 +608,7 @@ Python build: ('default', 'Mar 30 2020 15:12:05')
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Check `numpy` is installed</span>
-<span class="o">!</span>pip freeze <span class="p">|</span> grep numpy
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip freeze <span class="p">|</span> grep numpy
 </pre></div>
 
     </div>
@@ -587,15 +641,26 @@ Python build: ('default', 'Mar 30 2020 15:12:05')
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Using-the-__version__-attribute">
+<a class="anchor" href="#Using-the-__version__-attribute" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the <code>__version__</code> attribute<a class="anchor-link" href="#Using-the-__version__-attribute"> </a>
+</h4>
+</div>
+</div>
+</div>
     
     
 <div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
 <div class="input">
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Read the `__version__` attribute</span>
-
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="vm">__name__</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2">: version </span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
@@ -607,6 +672,7 @@ Python build: ('default', 'Mar 30 2020 15:12:05')
 </div>
 </div>
 
+    </details>
 <div class="output_wrapper">
 <div class="output">
 
@@ -634,78 +700,28 @@ fastai2     : version 0.0.16
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Using-sys">
+<a class="anchor" href="#Using-sys" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using <code>sys</code><a class="anchor-link" href="#Using-sys"> </a>
+</h4>
+<p>Returns absolute path to <code>python</code> executable</p>
+
+</div>
+</div>
+</div>
     
     
 <div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
 <div class="input">
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Using `which` (Unix-like systems)</span>
-<span class="o">!</span>which python
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>/Users/antoine/.pyenv/versions/fastai2python381/bin/python
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-    
-
-    
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Using `pyenv which` (Unix-like systems)</span>
-<span class="o">!</span>pyenv which python
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>/Users/antoine/.pyenv/versions/fastai2python381/bin/python
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-    
-
-    
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Using `sys` to get absolute path to `python` executable</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">executable</span>
 </pre></div>
@@ -714,19 +730,58 @@ fastai2     : version 0.0.16
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
+    </details>
+</div>
+    
 
-<div class="output_area">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Using-!which-(Unix-like-systems)">
+<a class="anchor" href="#Using-!which-(Unix-like-systems)" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using <code>!which</code> (Unix-like systems)<a class="anchor-link" href="#Using-!which-(Unix-like-systems)"> </a>
+</h4>
+<p>Remark: <a href="https://github.com/pyenv/pyenv#understanding-shims"><code>pyenv</code> uses shims</a>, so instead, run <code>pyenv which python</code> (see next cell):</p>
 
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
 
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>which python
+</pre></div>
 
-<div class="output_text output_subarea output_execute_result">
-<pre>'/Users/antoine/.pyenv/versions/3.8.1/envs/fastai2python381/bin/python3.8'</pre>
+    </div>
+</div>
 </div>
 
 </div>
+    
 
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Using-!pyenv-which">
+<a class="anchor" href="#Using-!pyenv-which" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using <code>!pyenv which</code><a class="anchor-link" href="#Using-!pyenv-which"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pyenv which python
+</pre></div>
+
+    </div>
 </div>
 </div>
 
@@ -739,8 +794,8 @@ fastai2     : version 0.0.16
 <h3 id="Locating-packages">
 <a class="anchor" href="#Locating-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Locating packages<a class="anchor-link" href="#Locating-packages"> </a>
 </h3>
-<h4 id="Example-with-numpy">
-<a class="anchor" href="#Example-with-numpy" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example with <code>numpy</code><a class="anchor-link" href="#Example-with-numpy"> </a>
+<h4 id="Read-the-__path__-attribute">
+<a class="anchor" href="#Read-the-__path__-attribute" aria-hidden="true"><span class="octicon octicon-link"></span></a>Read the <code>__path__</code> attribute<a class="anchor-link" href="#Read-the-__path__-attribute"> </a>
 </h4>
 </div>
 </div>
@@ -752,8 +807,7 @@ fastai2     : version 0.0.16
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Read the `__path__` attribute</span>
-<span class="kn">import</span> <span class="nn">numpy</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="n">numpy</span><span class="o">.</span><span class="n">__path__</span>
 </pre></div>
 
@@ -761,25 +815,17 @@ fastai2     : version 0.0.16
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>['/Users/antoine/.pyenv/versions/3.8.1/envs/fastai2python381/lib/python3.8/site-packages/numpy']</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
     
 
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For an editable install, from a local copy of the repository:</p>
+
+</div>
+</div>
+</div>
     
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -787,8 +833,34 @@ fastai2     : version 0.0.16
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># More info with `pip show`</span>
-<span class="o">!</span>pip show numpy <span class="p">|</span> grep Location
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">fastai2</span>
+<span class="n">fastai2</span><span class="o">.</span><span class="n">__path__</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Using-!pip-show">
+<a class="anchor" href="#Using-!pip-show" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using <code>!pip show</code><a class="anchor-link" href="#Using-!pip-show"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip show numpy <span class="p">|</span> grep Location
 <span class="c1"># !pip show numpy # uncomment to see more info on package</span>
 </pre></div>
 
@@ -796,30 +868,13 @@ fastai2     : version 0.0.16
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Location: /Users/antoine/.pyenv/versions/3.8.1/envs/fastai2python381/lib/python3.8/site-packages
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
     
 
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Example-with-fastai2">
-<a class="anchor" href="#Example-with-fastai2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example with <code>fastai2</code><a class="anchor-link" href="#Example-with-fastai2"> </a>
-</h4>
-<p>This is an editable install, from a local copy of the repository:</p>
+<p>For an editable install:</p>
 
 </div>
 </div>
@@ -831,26 +886,11 @@ fastai2     : version 0.0.16
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Using `pip show`</span>
-<span class="o">!</span>pip show fastai2 <span class="p">|</span> grep Location
-<span class="c1">#!pip show fastai2</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip show fastai2 <span class="p">|</span> grep Location
+<span class="c1">#!pip show fastai2 # uncomment to see more info on package</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Location: /Users/antoine/Computing/fastai2
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -860,8 +900,8 @@ fastai2     : version 0.0.16
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Search-path-for-modules">
-<a class="anchor" href="#Search-path-for-modules" aria-hidden="true"><span class="octicon octicon-link"></span></a>Search path for modules<a class="anchor-link" href="#Search-path-for-modules"> </a>
+<h4 id="Search-path-for-modules:-sys.path">
+<a class="anchor" href="#Search-path-for-modules:-sys.path" aria-hidden="true"><span class="octicon octicon-link"></span></a>Search path for modules: <code>sys.path</code><a class="anchor-link" href="#Search-path-for-modules:-sys.path"> </a>
 </h4>
 <p><code>Python</code> looks for paths to modules by looking into a list of directories in <code>sys.path</code>:</p>
 
@@ -875,38 +915,11 @@ fastai2     : version 0.0.16
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># `sys.path`</span>
-<span class="kn">import</span> <span class="nn">sys</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>['/Users/antoine/Computing/fastai-course-v4-companion',
- '/Users/antoine/.pyenv/versions/3.8.1/lib/python38.zip',
- '/Users/antoine/.pyenv/versions/3.8.1/lib/python3.8',
- '/Users/antoine/.pyenv/versions/3.8.1/lib/python3.8/lib-dynload',
- '',
- '/Users/antoine/.pyenv/versions/3.8.1/envs/fastai2python381/lib/python3.8/site-packages',
- '/Users/antoine/Computing/fastai2',
- '/Users/antoine/Computing/fastcore',
- '/Users/antoine/Computing/nbdev',
- '/Users/antoine/.pyenv/versions/3.8.1/envs/fastai2python381/lib/python3.8/site-packages/IPython/extensions',
- '/Users/antoine/.ipython']</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -931,28 +944,11 @@ fastai2     : version 0.0.16
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># List of all global site-package directories</span>
-<span class="kn">import</span> <span class="nn">site</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">site</span>
 <span class="n">site</span><span class="o">.</span><span class="n">getsitepackages</span><span class="p">()</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>['/Users/antoine/.pyenv/versions/3.8.1/envs/fastai2python381/lib/python3.8/site-packages']</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
