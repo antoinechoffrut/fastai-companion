@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Title | FastAI companion</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Title" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="summary" />
+<meta property="og:description" content="summary" />
+<link rel="canonical" href="https://antoinechoffrut.github.io/fastai-companion/2020/03/31/know-your-platform.html" />
+<meta property="og:url" content="https://antoinechoffrut.github.io/fastai-companion/2020/03/31/know-your-platform.html" />
+<meta property="og:site_name" content="FastAI companion" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-03-31T00:00:00-05:00" />
+<script type="application/ld+json">
+{"datePublished":"2020-03-31T00:00:00-05:00","dateModified":"2020-03-31T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://antoinechoffrut.github.io/fastai-companion/2020/03/31/know-your-platform.html"},"description":"summary","@type":"BlogPosting","url":"https://antoinechoffrut.github.io/fastai-companion/2020/03/31/know-your-platform.html","headline":"Title","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/fastai-companion/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://antoinechoffrut.github.io/fastai-companion/feed.xml" title="FastAI companion" /><link rel="shortcut icon" type="image/x-icon" href="/fastai-companion/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Title | FastAI companion</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Title" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="summary" />
+<meta property="og:description" content="summary" />
+<link rel="canonical" href="https://antoinechoffrut.github.io/fastai-companion/2020/03/31/know-your-platform.html" />
+<meta property="og:url" content="https://antoinechoffrut.github.io/fastai-companion/2020/03/31/know-your-platform.html" />
+<meta property="og:site_name" content="FastAI companion" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-03-31T00:00:00-05:00" />
+<script type="application/ld+json">
+{"datePublished":"2020-03-31T00:00:00-05:00","dateModified":"2020-03-31T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://antoinechoffrut.github.io/fastai-companion/2020/03/31/know-your-platform.html"},"description":"summary","@type":"BlogPosting","url":"https://antoinechoffrut.github.io/fastai-companion/2020/03/31/know-your-platform.html","headline":"Title","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://antoinechoffrut.github.io/fastai-companion/feed.xml" title="FastAI companion" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/fastai-companion/">FastAI companion</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/fastai-companion/about/">About</a><a class="page-link" href="/fastai-companion/search/">Search</a><a class="page-link" href="/fastai-companion/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Title</h1><p class="page-description">summary</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-03-31T00:00:00-05:00" itemprop="datePublished">
+        Mar 31, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      3 min read
+    
+</span></p>
+
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/antoinechoffrut/fastai-companion/tree/master/_notebooks/2020-03-31-know-your-platform.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/fastai-companion/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/antoinechoffrut/fastai-companion/master?filepath=_notebooks%2F2020-03-31-know-your-platform.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/fastai-companion/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/antoinechoffrut/fastai-companion/blob/master/_notebooks/2020-03-31-know-your-platform.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/fastai-companion/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-03-31-know-your-platform.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+# Know your system
+&gt; Finding information on os, python install, and packages.
+
+- toc: true 
+- badges: true
+- comments: true
+- categories: [workflow]
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr />
+<p>This notebook shows how to find information about your system such as:</p>
+<ul>
+<li>OS information</li>
+<li><code>python</code> version and install location</li>
+<li>package and module versions and install locations</li>
+</ul>
+<p>My system (in a nutshell):</p>
+<ul>
+<li>I work locally (mostly) on a mac;  </li>
+<li>I use <code>pyenv</code> as <code>python</code> version manager, and its plug-in <code>pyenv-virtualenv</code> as virtual environment manager.  </li>
+</ul>
+<p>Some adjusments may be needed if you work on different platforms (especially Windows), or if you use other managers, such as <code>conda</code>.</p>
+<hr />
+<p>tags: system platform virtual environment management install python jupyter pytorch fastai workflow productivity</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Tools-and-references">Tools and references<a class="anchor-link" href="#Tools-and-references"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Python-modules"><code>Python</code> modules<a class="anchor-link" href="#Python-modules"> </a></h3><ul>
+<li><code>sys</code></li>
+<li><code>site</code></li>
+<li><code>platform</code></li>
+</ul>
+<h3 id="Utilities">Utilities<a class="anchor-link" href="#Utilities"> </a></h3><ul>
+<li><code>pip</code>: <code>Python</code> package management system</li>
+<li><code>pyenv</code>: <code>Python</code> version management system</li>
+<li><code>pyenv-virtualenv</code>: virtual environment management system</li>
+<li><code>jupyter</code>: interactive platform for scientific computing</li>
+</ul>
+<h3 id="Helpful-commands">Helpful commands<a class="anchor-link" href="#Helpful-commands"> </a></h3><ul>
+<li><a href="https://ipython.readthedocs.io/en/stable/interactive/magics.html">Built-in magic commands</a> (IPython documentation)</li>
+<li><a href="https://ipython.readthedocs.io/en/stable/interactive/python-ipython-diff.html">Python vs IPython</a> (IPython documentation)</li>
+</ul>
+<h3 id="Useful-references">Useful references<a class="anchor-link" href="#Useful-references"> </a></h3><ul>
+<li><a href="https://ai-fast-track.github.io/blog/python/2020/03/17/how-to-pip-install-package.html">3 ways to <code>pip install</code> a package - fastai2 use case</a> by <a href="https://ai-fast-track.github.io/blog/">Farid</a> <a href="https://forums.fast.ai/u/farid">Hussainia</a></li>
+<li><a href="https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory/46071447#46071447">How do I find the location of my python site packages directory?</a> (stackoverflow)</li>
+</ul>
+<hr />
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Environment">Environment<a class="anchor-link" href="#Environment"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="System">System<a class="anchor-link" href="#System"> </a></h3><p>I usually work locally on a MacBook Pro (2018).  In particular I don't have a GPU (at least not a dedicated GPU).</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p><div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Platform: </span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Details:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Machine type:   </span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">machine</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;System:         </span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Version:        </span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">version</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processor:      </span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">processor</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Release:        </span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">release</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mac OS version: </span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">mac_ver</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+</p>
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Platform: macOS-10.15.4-x86_64-i386-64bit
+
+Details:
+Machine type:   x86_64
+System:         Darwin
+Version:        Darwin Kernel Version 19.4.0: Wed Mar  4 22:28:40 PST 2020; root:xnu-6153.101.6~15/RELEASE_X86_64
+Processor:      i386
+Release:        19.4.0
+Mac OS version: (&#39;10.15.4&#39;, (&#39;&#39;, &#39;&#39;, &#39;&#39;), &#39;x86_64&#39;)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Virtual-environments-(with-pyenv)">Virtual environments (with <code>pyenv</code>)<a class="anchor-link" href="#Virtual-environments-(with-pyenv)"> </a></h3><p>I use <code>pyenv</code> to manage <code>Python</code> versions, and the extension <code>pyenv-virtualenv</code> to manage virtual environments.</p>
+<p>To check which virtual environment is activated (with <code>pyenv</code>):</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pyenv version
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Python-version">Python version<a class="anchor-link" href="#Python-version"> </a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Using-the-sys-module">Using the <code>sys</code> module<a class="anchor-link" href="#Using-the-sys-module"> </a></h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p><div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+<span class="c1"># print(sys.version_info)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+</p>
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>3.8.1 (default, Mar 30 2020, 15:12:05) 
+[Clang 11.0.3 (clang-1103.0.32.29)]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Using-the-platform-module">Using the <code>platform</code> module<a class="anchor-link" href="#Using-the-platform-module"> </a></h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p><div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Python: version </span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">python_version</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Python build: </span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">python_build</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+</p>
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Python: version 3.8.1
+Python build: (&#39;default&#39;, &#39;Mar 30 2020 15:12:05&#39;)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="A-convoluted-alternative">A convoluted alternative<a class="anchor-link" href="#A-convoluted-alternative"> </a></h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>python --version
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Installed-packages">Installed packages<a class="anchor-link" href="#Installed-packages"> </a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="List-of-all-packlages-with-pip">List of all packlages with <code>pip</code><a class="anchor-link" href="#List-of-all-packlages-with-pip"> </a></h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip freeze
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that those lines beginning with <code>-e</code> correspond to packages installed in <a href="https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs">editable mode</a>.  For example, following <a href="https://ai-fast-track.github.io/blog/python/2020/03/17/how-to-pip-install-package.html">Farid Hassainia's post</a>, I have an editable install of <code>fastai2</code>:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Check-specific-packages">Check specific packages<a class="anchor-link" href="#Check-specific-packages"> </a></h4><p>Check that <code>fastai2</code> is installed</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip freeze <span class="p">|</span> grep fastai2
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>-e git+https://github.com/fastai/fastai2@8d229f2a01ac8f0a02ad86db954f7e3e48928bd9#egg=fastai2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Otherwise, packages installed via <code>pip</code> are listed as usual.  Check that (e.g.). <code>numpy</code> is installed:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip freeze <span class="p">|</span> grep numpy
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>numpy==1.18.2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Package-versions">Package versions<a class="anchor-link" href="#Package-versions"> </a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Using-the-__version__-attribute">Using the <code>__version__</code> attribute<a class="anchor-link" href="#Using-the-__version__-attribute"> </a></h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p><div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="vm">__name__</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2">: version </span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">fastai2</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fastai2</span><span class="o">.</span><span class="vm">__name__</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2">: version </span><span class="si">{</span><span class="n">fastai2</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+</p>
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>torch       : version 1.4.0
+fastai2     : version 0.0.16
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Locating-the-Python-install">Locating the <code>Python</code> install<a class="anchor-link" href="#Locating-the-Python-install"> </a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Using-sys">Using <code>sys</code><a class="anchor-link" href="#Using-sys"> </a></h4><p>Returns absolute path to <code>python</code> executable</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p><div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">executable</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+</p>
+    </details>
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Using-!which-(Unix-like-systems)">Using <code>!which</code> (Unix-like systems)<a class="anchor-link" href="#Using-!which-(Unix-like-systems)"> </a></h4><p>Remark: <a href="https://github.com/pyenv/pyenv#understanding-shims"><code>pyenv</code> uses shims</a>, so instead, run <code>pyenv which python</code> (see next cell):</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>which python
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Using-!pyenv-which">Using <code>!pyenv which</code><a class="anchor-link" href="#Using-!pyenv-which"> </a></h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pyenv which python
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Locating-packages">Locating packages<a class="anchor-link" href="#Locating-packages"> </a></h3><h4 id="Read-the-__path__-attribute">Read the <code>__path__</code> attribute<a class="anchor-link" href="#Read-the-__path__-attribute"> </a></h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="n">numpy</span><span class="o">.</span><span class="n">__path__</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For an editable install, from a local copy of the repository:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">fastai2</span>
+<span class="n">fastai2</span><span class="o">.</span><span class="n">__path__</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Using-!pip-show">Using <code>!pip show</code><a class="anchor-link" href="#Using-!pip-show"> </a></h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip show numpy <span class="p">|</span> grep Location
+<span class="c1"># !pip show numpy # uncomment to see more info on package</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For an editable install:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip show fastai2 <span class="p">|</span> grep Location
+<span class="c1">#!pip show fastai2 # uncomment to see more info on package</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Search-path-for-modules:-sys.path">Search path for modules: <code>sys.path</code><a class="anchor-link" href="#Search-path-for-modules:-sys.path"> </a></h4><p><code>Python</code> looks for paths to modules by looking into a list of directories in <code>sys.path</code>:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="List-of-all-global-site-packages-directories">List of all global <code>site-packages</code> directories<a class="anchor-link" href="#List-of-all-global-site-packages-directories"> </a></h4><p>Packages are normally installed in the <code>site-packages</code> folder of the <code>Python</code> installation.  This directory can be found using the <code>site</code> module:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">site</span>
+<span class="n">site</span><span class="o">.</span><span class="n">getsitepackages</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><a class="u-url" href="/fastai-companion/2020/03/31/know-your-platform.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/fastai-companion/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/fastai-companion/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/fastai-companion/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>On neural nets, PyTorch, and FastAI.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/antoinechoffrut" title="antoinechoffrut"><svg class="svg-icon grey"><use xlink:href="/fastai-companion/assets/minima-social-icons.svg#github"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
