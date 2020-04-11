@@ -13,11 +13,11 @@
   
     
         ,"post1": {
-            "title": "Monkey patching in fastai",
+            "title": "",
             "content": "Monkey patching . &quot;We do it in fastai all the time.&quot; Jeremy Howard . (from Swift For TensorFlow AND FastAI:Part 2, featuring Chris Lattner) Monkey patching refers to the practise of dynamically modifying classes and modules. This is done quite frequently in the fastai library. . This notebook dissects one common example, namely the ls() method added to the Path class from the pathlib Python library, which functionalities reminiscent of the ls command in bash. From the fastcore documentation: . We add an ls() method to pathlib.Path which is simply defined as list(Path.iterdir()), mainly for convenience in REPL environments such as notebooks. . . tags:programming python fastai exploration . The pathlib module . The pathlib module provides functionalities to handle filesystem paths. . from pathlib import Path path = Path().home() dir_native = dir(path) print(f&quot;Path to home directory: {str(path)}&quot;) print(f&#39;Object path has attribute ls: {&quot;ls&quot; in dir_native}&#39;) . Path to home directory: /Users/antoine Object path has attribute ls: False . Supercharging Path objects with fastai . We first remove the Path class from our scope so that we can load it again via fastai (read on): . %xdel Path try: Path print(&quot;This will fail so this won&#39;t print&quot;) except NameError: print(&quot;Class `Path` has been removed.&quot;) . NameError: name &#39;Path&#39; is not defined Class `Path` has been removed. . The following will automatically load Path (among many other things): . from fastai2.vision.all import * path = Path().home() dir_fastai = dir(path) print(f&quot;Path to home directory: {str(path)}&quot;) print(f&#39;Object path has attribute ls: {&quot;ls&quot; in dir_fastai}&#39;) . Path to home directory: /Users/antoine Object path has attribute ls: True . The ls method is one of several attributes that fastai (in fact, fastcore, read on) adds to the Path class. The list of added attributes is: . set(dir_fastai) - set(dir_native) . {&#39;load&#39;, &#39;load_array&#39;, &#39;ls&#39;, &#39;read&#39;, &#39;readlines&#39;, &#39;save&#39;, &#39;save_array&#39;, &#39;write&#39;} . Loading Path and Path.ls only? . It is an instructive exercise to find out how to load Path and its attributes added in the fastai library only. This is done in another notebook. .",
-            "url": "https://antoinechoffrut.github.io/fastai-companion/programming/2020/04/08/monkey-patching-in-fastai.html",
-            "relUrl": "/programming/2020/04/08/monkey-patching-in-fastai.html",
-            "date": " • Apr 8, 2020"
+            "url": "https://antoinechoffrut.github.io/fastai-companion/2020/04/11/2020-04-08-monkey-patching-in-fastai.html",
+            "relUrl": "/2020/04/11/2020-04-08-monkey-patching-in-fastai.html",
+            "date": " • Apr 11, 2020"
         }
         
     
