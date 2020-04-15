@@ -131,6 +131,7 @@ window.onload = wrap_img;
   <div class="post-content e-content" itemprop="articleBody">
     <ul class="section-nav">
 <li class="toc-entry toc-h1"><a href="#This-notebook">This notebook </a></li>
+<li class="toc-entry toc-h1"><a href="#My-system">My system </a></li>
 <li class="toc-entry toc-h1"><a href="#Tools-and-references">Tools and references </a>
 <ul>
 <li class="toc-entry toc-h2"><a href="#Python-modules">Python modules </a></li>
@@ -212,12 +213,21 @@ window.onload = wrap_img;
 <code>python</code> version and install location</li>
 <li>package and module versions and install locations</li>
 </ul>
-<p>My system (in a nutshell):</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="My-system">
+<a class="anchor" href="#My-system" aria-hidden="true"><span class="octicon octicon-link"></span></a>My system<a class="anchor-link" href="#My-system"> </a>
+</h1>
+<p>Some adjusments may be needed if you work on different platforms (especially Windows), or if you use other managers, such as <code>conda</code>:</p>
 <ul>
 <li>I work locally (mostly) on a mac;  </li>
 <li>I use <code>pyenv</code> as <code>python</code> version manager, and its plug-in <code>pyenv-virtualenv</code> as virtual environment manager.  </li>
 </ul>
-<p>Some adjusments may be needed if you work on different platforms (especially Windows), or if you use other managers, such as <code>conda</code>.</p>
 <hr>
 <p>tags: system platform virtual environment management install python jupyter pytorch fastai workflow productivity</p>
 
@@ -468,25 +478,18 @@ Mac OS version: ('10.15.4', ('', '', ''), 'x86_64')
     
     
 <div class="cell border-box-sizing code_cell rendered">
-<details class="description" open="">
-      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
-        <p></p>
 <div class="input">
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
-<span class="c1"># print(sys.version_info)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="p">)</span> <span class="c1"># alternatively: print(sys.version_info)</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
-    </details>
 <div class="output_wrapper">
 <div class="output">
 
@@ -517,16 +520,11 @@ Mac OS version: ('10.15.4', ('', '', ''), 'x86_64')
     
     
 <div class="cell border-box-sizing code_cell rendered">
-<details class="description" open="">
-      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
-        <p></p>
 <div class="input">
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
-<span class="kn">import</span> <span class="nn">platform</span>
-
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">platform</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Python: version </span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">python_version</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Python build: </span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">python_build</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
@@ -535,7 +533,6 @@ Mac OS version: ('10.15.4', ('', '', ''), 'x86_64')
 </div>
 </div>
 
-    </details>
 <div class="output_wrapper">
 <div class="output">
 
@@ -632,7 +629,7 @@ Python build: ('default', 'Mar 30 2020 15:12:05')
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Note that those lines beginning with <code>-e</code> correspond to packages installed in <a href="https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs">editable mode</a>.  For example, following <a href="https://ai-fast-track.github.io/blog/python/2020/03/17/how-to-pip-install-package.html">Farid Hassainia's post</a>, I have an editable install of <code>fastai2</code>:</p>
+<p>Note that those lines beginning with <code>-e</code> correspond to packages installed in <a href="https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs">editable mode</a>.  For example, following <a href="https://ai-fast-track.github.io/blog/python/2020/03/17/how-to-pip-install-package.html">Farid Hassainia's post</a>, I have an editable install of <code>fastai2</code> (see below).</p>
 
 </div>
 </div>
@@ -668,7 +665,7 @@ Python build: ('default', 'Mar 30 2020 15:12:05')
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>-e git+https://github.com/fastai/fastai2@a35329dafb77510d82a46bb9dc92697f5a2e4a06#egg=fastai2
+<pre>-e git+https://github.com/fastai/fastai2@44491962b1d79b2db0e89ffb3eee5129e9e1d489#egg=fastai2
 </pre>
 </div>
 </div>
@@ -682,7 +679,8 @@ Python build: ('default', 'Mar 30 2020 15:12:05')
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Otherwise, packages installed via <code>pip</code> are listed as usual.  Check that (e.g.). <code>numpy</code> is installed:</p>
+<p>This is an editable install.<br>
+Otherwise, packages installed via <code>pip</code> are listed as usual.  Check that (e.g.). <code>numpy</code> is installed:</p>
 
 </div>
 </div>
@@ -739,15 +737,11 @@ Python build: ('default', 'Mar 30 2020 15:12:05')
     
     
 <div class="cell border-box-sizing code_cell rendered">
-<details class="description" open="">
-      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
-        <p></p>
 <div class="input">
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
-<span class="kn">import</span> <span class="nn">torch</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="vm">__name__</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2">: version </span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">fastai2</span>
@@ -758,7 +752,6 @@ Python build: ('default', 'Mar 30 2020 15:12:05')
 </div>
 </div>
 
-    </details>
 <div class="output_wrapper">
 <div class="output">
 
@@ -800,15 +793,11 @@ fastai2     : version 0.0.17
     
     
 <div class="cell border-box-sizing code_cell rendered">
-<details class="description" open="">
-      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
-        <p></p>
 <div class="input">
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
-<span class="kn">import</span> <span class="nn">sys</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">executable</span>
 </pre></div>
 
@@ -816,7 +805,6 @@ fastai2     : version 0.0.17
 </div>
 </div>
 
-    </details>
 <div class="output_wrapper">
 <div class="output">
 
@@ -951,7 +939,7 @@ fastai2     : version 0.0.17
 <h3 id="Using-bash-command-which">
 <a class="anchor" href="#Using-bash-command-which" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using <code>bash</code> command <code>which</code><a class="anchor-link" href="#Using-bash-command-which"> </a>
 </h3>
-<p>Remark: <a href="https://github.com/pyenv/pyenv#understanding-shims"><code>pyenv</code> uses shims</a>, and running the comand <code>which python</code> in the cell below returns a different output if run from a terminal.  Instead, run <code>pyenv which python</code>.</p>
+<p>Remark: <a href="https://github.com/pyenv/pyenv#understanding-shims"><code>pyenv</code> uses shims</a>, and running the comand <code>which python</code> in the cell below returns a different output if run from a terminal.  In that case, run <code>pyenv which python</code>.</p>
 
 </div>
 </div>
