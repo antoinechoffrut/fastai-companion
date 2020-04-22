@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Scalars, vectors, matrices, and tensors | fastai companion</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Scalars, vectors, matrices, and tensors" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Correspodence between mathematics and PyTorch." />
+<meta property="og:description" content="Correspodence between mathematics and PyTorch." />
+<link rel="canonical" href="https://antoinechoffrut.github.io/fastai-companion/mathematics/2020/04/15/scalars-vectors-matrices-tensors.html" />
+<meta property="og:url" content="https://antoinechoffrut.github.io/fastai-companion/mathematics/2020/04/15/scalars-vectors-matrices-tensors.html" />
+<meta property="og:site_name" content="fastai companion" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-15T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"Correspodence between mathematics and PyTorch.","@type":"BlogPosting","headline":"Scalars, vectors, matrices, and tensors","dateModified":"2020-04-15T00:00:00-05:00","datePublished":"2020-04-15T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://antoinechoffrut.github.io/fastai-companion/mathematics/2020/04/15/scalars-vectors-matrices-tensors.html"},"url":"https://antoinechoffrut.github.io/fastai-companion/mathematics/2020/04/15/scalars-vectors-matrices-tensors.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/fastai-companion/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://antoinechoffrut.github.io/fastai-companion/feed.xml" title="fastai companion" /><link rel="shortcut icon" type="image/x-icon" href="/fastai-companion/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Scalars, vectors, matrices, and tensors | fastai companion</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Scalars, vectors, matrices, and tensors" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Correspodence between mathematics and PyTorch." />
+<meta property="og:description" content="Correspodence between mathematics and PyTorch." />
+<link rel="canonical" href="https://antoinechoffrut.github.io/fastai-companion/mathematics/2020/04/15/scalars-vectors-matrices-tensors.html" />
+<meta property="og:url" content="https://antoinechoffrut.github.io/fastai-companion/mathematics/2020/04/15/scalars-vectors-matrices-tensors.html" />
+<meta property="og:site_name" content="fastai companion" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-15T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"Correspodence between mathematics and PyTorch.","@type":"BlogPosting","headline":"Scalars, vectors, matrices, and tensors","dateModified":"2020-04-15T00:00:00-05:00","datePublished":"2020-04-15T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://antoinechoffrut.github.io/fastai-companion/mathematics/2020/04/15/scalars-vectors-matrices-tensors.html"},"url":"https://antoinechoffrut.github.io/fastai-companion/mathematics/2020/04/15/scalars-vectors-matrices-tensors.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://antoinechoffrut.github.io/fastai-companion/feed.xml" title="fastai companion" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/fastai-companion/">fastai companion</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/fastai-companion/about/">About</a><a class="page-link" href="/fastai-companion/search/">Search</a><a class="page-link" href="/fastai-companion/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Scalars, vectors, matrices, and tensors</h1><p class="page-description">Correspodence between mathematics and PyTorch.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-04-15T00:00:00-05:00" itemprop="datePublished">
+        Apr 15, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      5 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/fastai-companion/categories/#mathematics">mathematics</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/antoinechoffrut/fastai-companion/tree/master/_notebooks/2020-04-15-scalars-vectors-matrices-tensors.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/fastai-companion/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/antoinechoffrut/fastai-companion/master?filepath=_notebooks%2F2020-04-15-scalars-vectors-matrices-tensors.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/fastai-companion/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/antoinechoffrut/fastai-companion/blob/master/_notebooks/2020-04-15-scalars-vectors-matrices-tensors.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/fastai-companion/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h1"><a href="#tl;dr">tl;dr </a></li>
+<li class="toc-entry toc-h1"><a href="#Scalars">Scalars </a></li>
+<li class="toc-entry toc-h1"><a href="#Vectors">Vectors </a></li>
+<li class="toc-entry toc-h1"><a href="#Linear-transformations">Linear transformations </a></li>
+<li class="toc-entry toc-h1"><a href="#Column-vectors">Column vectors </a></li>
+<li class="toc-entry toc-h1"><a href="#Matrices">Matrices </a></li>
+<li class="toc-entry toc-h1"><a href="#Computation-and-compact-representation-of-linear-transformations">Computation and compact representation of linear transformations </a></li>
+<li class="toc-entry toc-h1"><a href="#Row-vectors">Row vectors </a></li>
+<li class="toc-entry toc-h1"><a href="#Computing-with-row-vectors">Computing with row vectors </a></li>
+</ul><script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML"></script>
+
+<!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-04-15-scalars-vectors-matrices-tensors.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+<p>tags: scalars vectors matrices tensors mathematics linear algebra pytorch</p>
+<hr>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="tl;dr">
+<a class="anchor" href="#tl;dr" aria-hidden="true"><span class="octicon octicon-link"></span></a>tl;dr<a class="anchor-link" href="#tl;dr"> </a>
+</h1>
+<p>We establish the following correspondence between entities commonly encountered in linear algebra and their counterparts in <code>PyTorch</code>.</p>
+<table>
+<thead>
+<tr>
+<th>mathematical name</th>
+<th>mathematical notation</th>
+<th>
+<code>tensor</code> shape</th>
+<th>
+<code>tensor</code> dimension</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>scalar</td>
+<td>$x$</td>
+<td><code>()</code></td>
+<td><code>0</code></td>
+</tr>
+<tr>
+<td>vector</td>
+<td>$(x_1, \dots, x_n)$</td>
+<td><code>(n,)</code></td>
+<td><code>1</code></td>
+</tr>
+<tr>
+<td>linear transform</td>
+<td>$w_{i,j}$ <br> $i=1, \dots, m$<br>$j=1, \dots, n$</td>
+<td>N/A</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>matrix</td>
+<td>$\begin{bmatrix}w_{1,1}&amp;\dots&amp;w_{1,n}\\\vdots&amp;\ddots&amp;\vdots\\w_{m,1}&amp;\dots&amp;w_{n,m}\end{bmatrix}$</td>
+<td><code>(m,n)</code></td>
+<td><code>2</code></td>
+</tr>
+<tr>
+<td>column vector</td>
+<td>$\begin{bmatrix}x_1\\\vdots\\x_n\end{bmatrix}$</td>
+<td><code>(n,1)</code></td>
+<td><code>2</code></td>
+</tr>
+<tr>
+<td>row vector</td>
+<td>$\begin{bmatrix}x_1&amp;\dots&amp;x_n\end{bmatrix}$</td>
+<td><code>(1,n)</code></td>
+<td><code>2</code></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash">
+    <svg class="octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>When we write <code>tensor</code>, we mean a <code>PyTorch</code> <code>tensor</code>.  Otherwise, "tensor" refers to the mathematical notion.
+</div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash flash-warn">
+    <svg class="octicon octicon-zap" viewbox="0 0 10 16" version="1.1" width="10" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M10 7H6l3-7-9 9h4l-3 7 9-9z"></path></svg>
+    <strong>Important: </strong>The dimension of a <em>vector</em> is the number of its entries.  The dimension of a <em>tensor</em> is the number of indices needed to label its entries, in other words the length of its shape.
+</div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>As a consequence, it is enough to refer to a <code>(m,n)</code>-<code>tensor</code> rather than to a <code>2</code>-dimensional <code>tensor</code> with shape <code>(m,n)</code>, but at times we will want to emphasize the dimension and make the information explicit.
+</div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Scalars">
+<a class="anchor" href="#Scalars" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scalars<a class="anchor-link" href="#Scalars"> </a>
+</h1>
+<p>A scalar is a real number.  It corresponds to a <code>0</code>-dimensional <code>tensor</code> with empty shape:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">tensor</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">(</span><span class="mf">3.14</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Example of a 0-dimensional tensor in PyTorch:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span><span class="o">*</span><span class="mi">45</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Dimension:   </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape:       </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Example of a 0-dimensional tensor in PyTorch:
+---------------------------------------------
+tensor(3.1400)
+
+Dimension:   0
+Shape:       ()
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Vectors">
+<a class="anchor" href="#Vectors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Vectors<a class="anchor-link" href="#Vectors"> </a>
+</h1>
+<p>An $n$-dimensional vector is a <strong>list</strong> of $n$ scalars:
+\begin{equation}(x_1, \dots, x_n)\,.\end{equation}
+It corresponds to a <code>0</code>-dimensional <code>tensor</code> of shape <code>(n,)</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">tensor</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">7.</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Example of a 1-dimensional tensor in PyTorch:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span><span class="o">*</span><span class="mi">45</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Dimension:   </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape:       </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Example of a 1-dimensional tensor in PyTorch:
+---------------------------------------------
+tensor([-1.,  5.,  7.])
+
+Dimension:   1
+Shape:       (3,)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Linear-transformations">
+<a class="anchor" href="#Linear-transformations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Linear transformations<a class="anchor-link" href="#Linear-transformations"> </a>
+</h1>
+<p>A linear transformation which maps $n$-dimensional vectors to $m$-dimensional vectors can be identified with a doubly-indexed list of scalars $w_{i,j}$ where $i$ runs from $1$ to $m$ and $j$ from $1$ to $n$, in that they act on input vectors according to the familiar formula:
+
+$$y_i = \sum_{j=1}^nw_{i,j}x_j\quad \textrm{for}\quad i=1, \dots, m\,.$$
+
+</p>
+<div class="flash flash-success">
+    <svg class="octicon octicon-checklist" viewbox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M16 8.5l-6 6-3-3L8.5 10l1.5 1.5L14.5 7 16 8.5zM5.7 12.2l.8.8H2c-.55 0-1-.45-1-1V3c0-.55.45-1 1-1h7c.55 0 1 .45 1 1v6.5l-.8-.8c-.39-.39-1.03-.39-1.42 0L5.7 10.8a.996.996 0 000 1.41v-.01zM4 4h5V3H4v1zm0 2h5V5H4v1zm0 2h3V7H4v1zM3 9H2v1h1V9zm0-2H2v1h1V7zm0-2H2v1h1V5zm0-2H2v1h1V3z"></path></svg>
+    <strong>Tip: </strong>The indices in $w_{i,j}x_j$ appear in the order $(i, j, j)$.  The dummy index $j$ is repeated next to itself and "disappears" upon summation, while the index $i$ remains.
+</div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Column-vectors">
+<a class="anchor" href="#Column-vectors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Column vectors<a class="anchor-link" href="#Column-vectors"> </a>
+</h1>
+<p>For computational purposes, instead of a vector $(x_1, \dots, x_n)$, it is convenient to work with its <strong>column vector</strong> counterpart, which is the array
+$$\begin{bmatrix}x_1\\\vdots\\x_n\end{bmatrix}\,.
+$$
+</p>
+<div class="flash flash-warn">
+    <svg class="octicon octicon-zap octicon octicon-zap" viewbox="0 0 10 16" version="1.1" width="10" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M10 7H6l3-7-9 9h4l-3 7 9-9z"></path></svg>
+    <strong>Important: </strong>It is important to distinguish a vector and its corresponding column vector:
+</div>$$(x_1, \dots, x_n) \quad \ne\quad \begin{bmatrix}x_1\\\vdots\\x_n\end{bmatrix}\,.$$
+<p>Indeed, while the vector corresponds to a <code>1</code>-dimensional <code>tensor</code>, its column vector counterpart corresponds to a <code>2</code>-dimensional <code>tensor</code> with shape <code>(n,1)</code>:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">tensor</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">7.</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Example of a 1-dimensional tensor in PyTorch:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span><span class="o">*</span><span class="mi">45</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Dimension:   </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape:       </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Example of a 1-dimensional tensor in PyTorch:
+---------------------------------------------
+tensor([[-1.],
+        [ 5.],
+        [ 7.]])
+
+Dimension:   2
+Shape:       (3, 1)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Matrices">
+<a class="anchor" href="#Matrices" aria-hidden="true"><span class="octicon octicon-link"></span></a>Matrices<a class="anchor-link" href="#Matrices"> </a>
+</h1>
+<p>An <strong>$m$-by-$n$ matrix</strong> is a doubly-indexed list $w_{i,j}$ where $i$ ranges from $1$ to $m$ and $j$ from $1$ to $n$.  It is usually written as an array with $m$ rows and $n$ columns:
+$$\begin{bmatrix}
+w_{1,1}&amp;\dots&amp;w_{1,j}&amp;\dots&amp;w_{1,n}\\
+\vdots&amp;&amp;\vdots&amp;&amp;\vdots\\
+w_{i,1}&amp;\dots&amp;w_{i,j}&amp;\dots&amp;w_{i,n}\\
+\vdots&amp;&amp;\vdots&amp;&amp;\vdots\\
+w_{m,1}&amp;\dots&amp;w_{m,j}&amp;\dots&amp;w_{m,n}
+\end{bmatrix}
+$$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash flash-warn">
+    <svg class="octicon octicon-zap octicon octicon-zap octicon octicon-zap" viewbox="0 0 10 16" version="1.1" width="10" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M10 7H6l3-7-9 9h4l-3 7 9-9z"></path></svg>
+    <strong>Important: </strong>The first index in $w_{i,j}$ labels rows and the second index labels columns.
+</div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>An $m$-by-$n$ matrix corresponds to a <code>2</code>-dimensional<code>tensor</code> with shape <code>(m,n)</code>:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">m</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Example of a 2-dimensional tensor in PyTorch:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span><span class="o">*</span><span class="mi">45</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Dimension:   </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape:       </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Example of a 2-dimensional tensor in PyTorch:
+---------------------------------------------
+tensor([[-0.3536,  1.9439, -0.0042, -0.8287],
+        [-0.4937,  0.4641, -1.0579,  0.2006],
+        [-0.4996, -1.2149, -0.9282,  0.1443]])
+
+Dimension:   2
+Shape:       (3, 4)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Computation-and-compact-representation-of-linear-transformations">
+<a class="anchor" href="#Computation-and-compact-representation-of-linear-transformations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Computation and compact representation of linear transformations<a class="anchor-link" href="#Computation-and-compact-representation-of-linear-transformations"> </a>
+</h1>
+<p>The <em>collection</em> of $m$ formulas $y_i = \sum_{j=1}^nw_{i,j}x_j$, where $i$ runs from $1$ to $m$, is compactly represented as
+$$
+\begin{bmatrix}y_1\\\vdots\\y_m\end{bmatrix}
+\,=\,\begin{bmatrix}w_{1,1}&amp;\dots&amp;w_{1,n}\\\vdots&amp;\ddots&amp;\vdots\\w_{m,1}&amp;\dots&amp;w_{m,n}\end{bmatrix}
+\begin{bmatrix}x_1\\\vdots\\x_n\end{bmatrix}
+$$
+where the matrix is written to the left of the input column vector.
+</p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>The number of columns in the matrix matches the number of rows in the column vector.
+</div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Row-vectors">
+<a class="anchor" href="#Row-vectors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Row vectors<a class="anchor-link" href="#Row-vectors"> </a>
+</h1>
+<p>Identifying a vector with its column vector is the more common convention.  Alternatively, the vector $(x_1, \dots, x_n)$ can be identified with its <strong>row vector</strong> counterpart, which is the array
+
+$$\begin{bmatrix}x_1&amp;\dots&amp;x_n\end{bmatrix}\,.$$
+
+</p>
+<div class="flash flash-warn">
+    <svg class="octicon octicon-zap octicon octicon-zap octicon octicon-zap octicon octicon-zap" viewbox="0 0 10 16" version="1.1" width="10" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M10 7H6l3-7-9 9h4l-3 7 9-9z"></path></svg>
+    <strong>Important: </strong>Again, a vector, its column and row vector counterparts are all different objects:
+</div>$$(x_1, \dots, x_n) \quad \ne \quad \begin{bmatrix}x_1\\\vdots\\x_n\end{bmatrix}
+\quad\ne\quad
+\begin{bmatrix}x_1&amp;\dots&amp;x_n\end{bmatrix}
+\quad\ne\quad
+(x_1, \dots, x_n)\,.$$
+<p>Indeed, a row vector of length $n$ corresponds to a <code>2</code>-dimensional <code>tensor</code> with shape <code>(1,n)</code>:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">tensor</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">7.</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Example of a 1-dimensional tensor in PyTorch:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span><span class="o">*</span><span class="mi">45</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Dimension:   </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape:       </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Example of a 1-dimensional tensor in PyTorch:
+---------------------------------------------
+tensor([[-1.,  5.,  7.]])
+
+Dimension:   2
+Shape:       (1, 3)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>Vectors and row vectors are all represented horizontally.  However, vectors are written with parentheses while row vectors are written with square brackets.
+</div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Computing-with-row-vectors">
+<a class="anchor" href="#Computing-with-row-vectors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Computing with row vectors<a class="anchor-link" href="#Computing-with-row-vectors"> </a>
+</h1>
+<p>In terms of row vectors, the output of a linear transformation is more conveniently rewritten with the similar but different formulas
+
+$$y_j = \sum_{i=1}^nx_i\tilde w_{i,j}\qquad \textrm{for}\quad j=1, \dots, m$$
+
+where now the matrix with coefficients $\tilde w_{i,j}$ where $i$ runs from $1$ to $n$ and $j$ from $1$ to $m$, has $n$ rows and $m$ columns:
+$$
+\begin{bmatrix}
+\tilde w_{1,1}&amp;\dots&amp;\tilde w_{1,j}&amp;\dots&amp;\tilde w_{1,m}\\
+\vdots&amp;&amp;\vdots&amp;&amp;\vdots\\
+\tilde w_{i,1}&amp;\dots&amp;\tilde w_{i,j}&amp;\dots&amp;\tilde w_{i,m}\\
+\vdots&amp;&amp;\vdots&amp;&amp;\vdots\\
+\tilde w_{n,1}&amp;\dots&amp;\tilde w_{n,i}&amp;\dots&amp;\tilde w_{n,m}
+\end{bmatrix}\,.$$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash flash-success">
+    <svg class="octicon octicon-checklist octicon octicon-checklist" viewbox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M16 8.5l-6 6-3-3L8.5 10l1.5 1.5L14.5 7 16 8.5zM5.7 12.2l.8.8H2c-.55 0-1-.45-1-1V3c0-.55.45-1 1-1h7c.55 0 1 .45 1 1v6.5l-.8-.8c-.39-.39-1.03-.39-1.42 0L5.7 10.8a.996.996 0 000 1.41v-.01zM4 4h5V3H4v1zm0 2h5V5H4v1zm0 2h3V7H4v1zM3 9H2v1h1V9zm0-2H2v1h1V7zm0-2H2v1h1V5zm0-2H2v1h1V3z"></path></svg>
+    <strong>Tip: </strong>The indices in $x_i\tilde w_{i,j}$ appear in the order $(i, i, j)$ (note the difference from earlier).  The dummy index, which is now $i$, is repeated next to itself.  The remaining index, which is now $j$, is the same as that in the quantity $y_j$ on the left of the equation.
+</div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The collection of $m$ formulas $y_j = \sum_{i=1}^nx_i\tilde w_{i,j}$, for $j$ from $1$ to $m$, is compactly represented as
+$$
+\begin{bmatrix}y_1&amp;\dots&amp;y_m\end{bmatrix}
+\quad=\quad
+\begin{bmatrix}x_1&amp;\dots&amp;x_n\end{bmatrix}
+\begin{bmatrix}\tilde w_{1,1}&amp;\dots&amp;\tilde w_{1,m}\\\vdots&amp;\ddots&amp;\vdots\\\tilde w_{n,1}&amp;\dots&amp;\tilde w_{n,m}
+\end{bmatrix}
+$$
+where the matrix is written to the right of the input row vector.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>The number of columns in the input row vector matches the number of rows in the matrix.
+</div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash flash-warn">
+    <svg class="octicon octicon-zap octicon octicon-zap octicon octicon-zap octicon octicon-zap octicon octicon-zap" viewbox="0 0 10 16" version="1.1" width="10" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M10 7H6l3-7-9 9h4l-3 7 9-9z"></path></svg>
+    <strong>Important: </strong>The coefficients $\tilde w_{i,j}$ share the same values as the coefficients $w_{i,j}$ in the representation with column vectors, but they are coefficients of distinct matrices: the first is $n$-by-$m$ while the second is $m$-by-$n$.  In fact, these matrices are transposes of each other:
+</div>$$
+\begin{bmatrix}\tilde w_{1,1}&amp;\dots&amp;\tilde w_{1,m}\\\vdots&amp;\ddots&amp;\vdots\\\tilde w_{n,1}&amp;\dots&amp;\tilde w_{n,m}
+\end{bmatrix}
+\quad=\quad
+\begin{bmatrix}w_{1,1}&amp;\dots&amp;w_{1,n}\\\vdots&amp;\ddots&amp;\vdots\\w_{m,1}&amp;\dots&amp;w_{m,n}\end{bmatrix}^\top
+\quad=\quad
+\begin{bmatrix}w_{1,1}&amp;\dots&amp;w_{m,1}\\\vdots&amp;\ddots&amp;\vdots\\w_{1,n}&amp;\dots&amp;w_{m,n}\end{bmatrix}
+\,.$$
+Equivalently,
+
+$$\tilde w_{i,j} = w_{j,i}\qquad \textrm{for}\quad i=1, \dots, n\,,\quad j=1, \dots, m\,.$$
+
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="antoinechoffrut/fastai-companion"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/fastai-companion/mathematics/2020/04/15/scalars-vectors-matrices-tensors.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/fastai-companion/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/fastai-companion/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/fastai-companion/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>On neural nets, PyTorch, and fastai.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/antoinechoffrut" title="antoinechoffrut"><svg class="svg-icon grey"><use xlink:href="/fastai-companion/assets/minima-social-icons.svg#github"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

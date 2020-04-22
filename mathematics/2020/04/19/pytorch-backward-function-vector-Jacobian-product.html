@@ -1,0 +1,1833 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Computing gradients and derivatives in PyTorch | fastai companion</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Computing gradients and derivatives in PyTorch" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Making good use of the gradient argument in PyTorch’s backward function" />
+<meta property="og:description" content="Making good use of the gradient argument in PyTorch’s backward function" />
+<link rel="canonical" href="https://antoinechoffrut.github.io/fastai-companion/mathematics/2020/04/19/pytorch-backward-function-vector-Jacobian-product.html" />
+<meta property="og:url" content="https://antoinechoffrut.github.io/fastai-companion/mathematics/2020/04/19/pytorch-backward-function-vector-Jacobian-product.html" />
+<meta property="og:site_name" content="fastai companion" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-19T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"Making good use of the gradient argument in PyTorch’s backward function","@type":"BlogPosting","headline":"Computing gradients and derivatives in PyTorch","dateModified":"2020-04-19T00:00:00-05:00","datePublished":"2020-04-19T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://antoinechoffrut.github.io/fastai-companion/mathematics/2020/04/19/pytorch-backward-function-vector-Jacobian-product.html"},"url":"https://antoinechoffrut.github.io/fastai-companion/mathematics/2020/04/19/pytorch-backward-function-vector-Jacobian-product.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/fastai-companion/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://antoinechoffrut.github.io/fastai-companion/feed.xml" title="fastai companion" /><link rel="shortcut icon" type="image/x-icon" href="/fastai-companion/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Computing gradients and derivatives in PyTorch | fastai companion</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Computing gradients and derivatives in PyTorch" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Making good use of the gradient argument in PyTorch’s backward function" />
+<meta property="og:description" content="Making good use of the gradient argument in PyTorch’s backward function" />
+<link rel="canonical" href="https://antoinechoffrut.github.io/fastai-companion/mathematics/2020/04/19/pytorch-backward-function-vector-Jacobian-product.html" />
+<meta property="og:url" content="https://antoinechoffrut.github.io/fastai-companion/mathematics/2020/04/19/pytorch-backward-function-vector-Jacobian-product.html" />
+<meta property="og:site_name" content="fastai companion" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-19T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"Making good use of the gradient argument in PyTorch’s backward function","@type":"BlogPosting","headline":"Computing gradients and derivatives in PyTorch","dateModified":"2020-04-19T00:00:00-05:00","datePublished":"2020-04-19T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://antoinechoffrut.github.io/fastai-companion/mathematics/2020/04/19/pytorch-backward-function-vector-Jacobian-product.html"},"url":"https://antoinechoffrut.github.io/fastai-companion/mathematics/2020/04/19/pytorch-backward-function-vector-Jacobian-product.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://antoinechoffrut.github.io/fastai-companion/feed.xml" title="fastai companion" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/fastai-companion/">fastai companion</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/fastai-companion/about/">About</a><a class="page-link" href="/fastai-companion/search/">Search</a><a class="page-link" href="/fastai-companion/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Computing gradients and derivatives in PyTorch</h1><p class="page-description">Making good use of the `gradient` argument in PyTorch&#39;s `backward` function</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-04-19T00:00:00-05:00" itemprop="datePublished">
+        Apr 19, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      16 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/fastai-companion/categories/#mathematics">mathematics</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/antoinechoffrut/fastai-companion/tree/master/_notebooks/2020-04-19-pytorch-backward-function-vector-Jacobian-product.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/fastai-companion/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/antoinechoffrut/fastai-companion/master?filepath=_notebooks%2F2020-04-19-pytorch-backward-function-vector-Jacobian-product.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/fastai-companion/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/antoinechoffrut/fastai-companion/blob/master/_notebooks/2020-04-19-pytorch-backward-function-vector-Jacobian-product.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/fastai-companion/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h1"><a href="#tl;dr">tl;dr </a></li>
+<li class="toc-entry toc-h1"><a href="#A-brief-overview">A brief overview </a></li>
+<li class="toc-entry toc-h1"><a href="#Usage-examples-of-the-backward-function">Usage examples of the backward function </a></li>
+<li class="toc-entry toc-h1"><a href="#Mathematical-preliminaries">Mathematical preliminaries </a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#Scalars,-vectors,-matrices,-and-tensors">Scalars, vectors, matrices, and tensors </a></li>
+<li class="toc-entry toc-h2"><a href="#Mathematical-functions">Mathematical functions </a></li>
+<li class="toc-entry toc-h2"><a href="#Differentiation">Differentiation </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Basic-definitions">Basic definitions </a></li>
+<li class="toc-entry toc-h3"><a href="#Derivatives-of-vector-valued,-univariate-functions">Derivatives of vector-valued, univariate functions </a></li>
+<li class="toc-entry toc-h3"><a href="#Gradients">Gradients </a></li>
+<li class="toc-entry toc-h3"><a href="#Jacobians">Jacobians </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Special-case:-$m=1$">Special case: $m=1$ </a></li>
+<li class="toc-entry toc-h4"><a href="#Special-case:-$n=1$">Special case: $n=1$ </a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Vector-Jacobian-products">Vector-Jacobian products </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Special-case">Special case </a></li>
+<li class="toc-entry toc-h3"><a href="#Application:-Gradients-of-vector-valued-functions">Application: Gradients of vector-valued functions </a></li>
+<li class="toc-entry toc-h3"><a href="#Application:-Derivatives-at-multiple-points">Application: Derivatives at multiple points </a></li>
+<li class="toc-entry toc-h3"><a href="#The-trick-with-sum()">The trick with sum() </a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#Computing-gradients-with-PyTorch">Computing gradients with PyTorch </a></li>
+<li class="toc-entry toc-h1"><a href="#Examples-revisited">Examples revisited </a></li>
+</ul><script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML"></script>
+
+<!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-04-19-pytorch-backward-function-vector-Jacobian-product.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+<p>tags: mathematics pytorch gradients backward automatic differentiation vector-Jacobian product backpropagation</p>
+<hr>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="tl;dr">
+<a class="anchor" href="#tl;dr" aria-hidden="true"><span class="octicon octicon-link"></span></a>tl;dr<a class="anchor-link" href="#tl;dr"> </a>
+</h1>
+<p>The <code>backward</code> function in <code>PyTorch</code> can be used to compute the derivatives or gradients of functions.  The <code>backward</code> function computes vector-Jacobian products so that the appropriate vector must be determined.  In other words, the correct <code>gradient</code> argument must be passed to <code>backward</code>, although not passing <code>gradient</code> explicitly will cause <code>backward</code> to choose the appropriate value but only in the simplest cases.</p>
+<p>This notebook explains vector-Jacobian products and how to choose the <code>gradient</code> argument in the <code>backward</code> function in the general case.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="A-brief-overview">
+<a class="anchor" href="#A-brief-overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>A brief overview<a class="anchor-link" href="#A-brief-overview"> </a>
+</h1>
+<p>In the case of a function taking a scalar and returning a scalar, the use of the <code>backward</code> function is quite straight-forward:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Derivative at a single point:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Derivative at a single point:
+tensor(2.)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, when</p>
+<ul>
+<li>the function is <strong>multi-valued</strong> (e.g. vector- or matrix-valued); or  </li>
+<li>one wishes to compute the derivative of a function at <strong>mulitple</strong> points,  </li>
+</ul>
+<p>then the <code>gradient</code> argument in <code>backward</code> must be suitably chosen.  For example:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">gradient</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">gradient</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Derivative at multiple points:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Derivative at multiple points:
+tensor([-4., -2.,  0.,  2.,  4.])
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Indeed, more precisely, the <code>backward</code> function computes vector-Jacobian products, which is not explicit in the function's doc string:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"First line of `torch.Tensor.backward` doc string:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\"</span><span class="s2">"</span><span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">.</span><span class="n">backward</span><span class="o">.</span><span class="vm">__doc__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>First line of `torch.Tensor.backward` doc string:
+"Computes the gradient of current tensor w.r.t. graph leaves."
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>although some explanations are given <a href="https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html#gradients">in this official tutorial</a>.  The crucial point is therefore to choose the appropriate vector, which is passed to the <code>backward</code> function in its <code>gradient</code> argument:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"torch.Tensor.backward</span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">.</span><span class="n">backward</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"..."</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">.</span><span class="n">backward</span><span class="o">.</span><span class="vm">__doc__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)[</span><span class="mi">11</span><span class="p">:</span><span class="mi">18</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"..."</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>torch.Tensor.backward(self, gradient=None, retain_graph=None, create_graph=False)
+...
+        Arguments:
+            gradient (Tensor or None): Gradient w.r.t. the
+                tensor. If it is a tensor, it will be automatically converted
+                to a Tensor that does not require grad unless ``create_graph`` is True.
+                None values can be specified for scalar Tensors or ones that
+                don't require grad. If a None value would be acceptable then
+                this argument is optional.
+...
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There is a way around specifying the <code>gradient</code> argument.  Revisiting the example above, the derivative at multiple points can be equivalently calculated by adding a <code>sum()</code>:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Derivative at multiple points:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Derivative at multiple points:
+tensor([-4., -2.,  0.,  2.,  4.])
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here, the <code>backward</code> method is invoked on a different <code>tensor</code>:</p>
+
+<pre><code>(x**2).backward()</code></pre>
+<p>if <code>x</code> contains a single input,
+vs</p>
+
+<pre><code>(x**2).sum().backward()</code></pre>
+<p>if <code>x</code> contains multiple inputs.</p>
+<p>On the other hand, passing the <code>gradient</code> argument, whether <code>x</code> contains one or multiple inputs, the same command is used to compute the derivatives:</p>
+
+<pre><code>y = (x**2)
+y.backward(torch.ones_like(y))</code></pre>
+<p>Roughly speaking, the difference between the two methods, namely setting <code>gradient=torch.ones_like(y)</code> or adding <code>sum()</code>, is in the order of the summation and differentiation.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Usage-examples-of-the-backward-function">
+<a class="anchor" href="#Usage-examples-of-the-backward-function" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage examples of the <code>backward</code> function<a class="anchor-link" href="#Usage-examples-of-the-backward-function"> </a>
+</h1>
+<p>The derivative of the <strong>scalar</strong>, <strong>univariate</strong> function $f(x)=x^2$ at a <strong>single</strong> point $x=1$:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="n">x</span><span class="o">.</span><span class="n">grad</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>tensor(2.)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The derivative of the <strong>scalar</strong>, <strong>univariate</strong> function $f(x)=x^2$ at <strong>multiple</strong> points $x= -2, -1, \dots, 2$:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">grad</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>tensor([-4., -2.,  0.,  2.,  4.])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The gradient of the <strong>scalar</strong>, <strong>multivariate</strong> function $f(x_1, x_2)=3x_1^2 + 5x_2^2$ at a <strong>single</strong> point $(x_1, x_2)=(-1, 2)$:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="n">x</span><span class="o">.</span><span class="n">grad</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>tensor([-6., 20.])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The gradient of the <strong>scalar</strong>, <strong>multivariate</strong> function $f(x_1, x_2) = -x_1^2 + x_2^2$ at <strong>multiple</strong> points $(x_1, x_2)$:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">grad</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>tensor([[-0.,  2.],
+        [-4.,  6.],
+        [-8., 10.]], dtype=torch.float64)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <em>derivatives</em> of the <strong>vector-valued</strong>, <strong>univariate</strong> function $f(x)= (-x^3, 5x)$ at a <strong>single</strong> point $x=1$, i.e. the derivative of</p>
+<ul>
+<li>its first component function $f_1(x)=-x^3$; and</li>
+<li>its second component function $f_2(x)=5x$.</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="o">*</span><span class="n">x</span><span class="p">])</span>
+
+<span class="n">v1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"f_1'(</span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
+
+<span class="n">v2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"f_2'(</span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>f_1'(1.0) = -3.0
+f_2'(1.0) =  5.0
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <em>derivatives</em> of the <strong>vector-valued</strong>, <strong>univariate</strong> function $f(x)= (-x^3, 5x)$ at <strong>multiple</strong> points, i.e. the derivative of</p>
+<ul>
+<li>its first component function $f_1(x)=-x^3$; and</li>
+<li>its second component function $f_2(x)=5x$.</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-hide</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="o">*</span><span class="n">x</span><span class="p">])</span>
+
+<span class="n">ranges</span> <span class="o">=</span> <span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">]</span>
+
+<span class="n">v1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">ranges</span><span class="p">)])</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Derivative of f_1(x)=-3x^2 at the points </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span><span class="si">}</span><span class="s2">:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
+
+<span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
+
+<span class="n">v2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="mf">0.</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">ranges</span><span class="p">)])</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Derivative of f_2(x)=5x at the points </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span><span class="si">}</span><span class="s2">:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Derivative of f_1(x)=-3x^2 at the points (0.0, 1.0, 2.0):
+tensor([  0.,  -3., -12.], dtype=torch.float64)
+
+Derivative of f_2(x)=5x at the points (0.0, 1.0, 2.0):
+tensor([5., 5., 5.], dtype=torch.float64)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <em>gradients</em> of the <strong>vector-valued</strong>, <strong>multivariate</strong> function
+$$
+f(x_1, \dots, x_n) = (x_1 + \dots + x_n\,, x_1^2 + \dots + x_n^2)
+$$
+at a <strong>single</strong> point $(x_1, \dots, x_n)$, i.e. the gradient of</p>
+<ul>
+<li>its first component function $f_1(x_1, \dots, x_n) = x_1 + \dots + x_n$; and</li>
+<li>its second component function $f_2(x_1, \dots, x_n) = x_1^2 + \dots + x_n^2$.</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"x                 : </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"y = (y_1, y_2)    : </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">v1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"gradient of y_1   : </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
+
+<span class="n">v2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"gradient of y_2   : </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>x                 : (0.0, 1.0, 2.0, 3.0)
+y = (y_1, y_2)    : (6.0, 14.0)
+gradient of y_1   : (1.0, 1.0, 1.0, 1.0)
+gradient of y_2   : (0.0, 2.0, 4.0, 6.0)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <em>gradients</em> of the <strong>vector-valued</strong>, <strong>multivariate</strong> function
+$$
+f(x_1, \dots, x_n) = (x_1 + \dots + x_n\,, x_1^2 + \dots + x_n^2)
+$$
+at <strong>multiple</strong> points, i.e. the gradient of</p>
+<ul>
+<li>its first component function $f_1(x_1, \dots, x_n) = x_1 + \dots + x_n$; and</li>
+<li>its second component function $f_2(x_1, \dots, x_n) = x_1^2 + \dots + x_n^2$.</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"x:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"y:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="n">ranges</span> <span class="o">=</span> <span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">]</span>
+
+<span class="n">v1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">ranges</span><span class="p">)])</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Gradients of the f1 at multiple points:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
+
+<span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">v2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="mf">0.</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">ranges</span><span class="p">)])</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Gradients of the f2 at multiple points:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>x:
+tensor([[ 0.,  1.,  2.,  3.],
+        [ 4.,  5.,  6.,  7.],
+        [ 8.,  9., 10., 11.]], dtype=torch.float64)
+y:
+tensor([[  6.,  22.,  38.],
+        [ 14., 126., 366.]], dtype=torch.float64)
+
+Gradients of the f1 at multiple points:
+tensor([[1., 1., 1., 1.],
+        [1., 1., 1., 1.],
+        [1., 1., 1., 1.]], dtype=torch.float64)
+
+Gradients of the f2 at multiple points:
+tensor([[ 0.,  2.,  4.,  6.],
+        [ 8., 10., 12., 14.],
+        [16., 18., 20., 22.]], dtype=torch.float64)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Mathematical-preliminaries">
+<a class="anchor" href="#Mathematical-preliminaries" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mathematical preliminaries<a class="anchor-link" href="#Mathematical-preliminaries"> </a>
+</h1>
+<h2 id="Scalars,-vectors,-matrices,-and-tensors">
+<a class="anchor" href="#Scalars,-vectors,-matrices,-and-tensors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scalars, vectors, matrices, and tensors<a class="anchor-link" href="#Scalars,-vectors,-matrices,-and-tensors"> </a>
+</h2>
+<ul>
+<li>A <strong>scalar</strong> is a real number.  It is usually denoted with $x$. </li>
+<li>An <strong>$n$-dimensional vector</strong> is a list $(x_1, \dots, x_n)$ of scalars.</li>
+<li>An <strong>$m$-by-$n$ matrix</strong> is an array with $m$ rows and $n$ columns of scalars:
+$$
+\begin{bmatrix}w_{1,1}&amp;\dots&amp;w_{1,n}\\\vdots&amp;\ddots&amp;\vdots\\w_{m,1}&amp;\dots&amp;w_{m,n}\end{bmatrix}
+$$</li>
+<li>A <strong>column vector</strong> of length $n$ is a $n$-by-$1$ matrix:
+
+$$\begin{bmatrix}x_1\\\vdots\\x_n\end{bmatrix}$$
+
+Note that it is distinct from its vector counterpart $(x_1, \dots, x_n)$.</li>
+<li>A <strong>row vector</strong> of length $n$ is a $1$-by-$n$ matrix:
+
+$$\begin{bmatrix}x_1&amp;\dots&amp;x_n\end{bmatrix}$$
+
+Note that it is distinct from its vector and column vector counterparts.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>For convenience, we may denote a vector, a column vector, or a row vector with a single symbol, typically $x$.
+</div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In another post we establish the following correspondence between these mathematical entities and their <code>tensor</code> counterparts in <code>PyTorch</code>:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<table>
+<thead>
+<tr>
+<th>mathematical name</th>
+<th>mathematical notation</th>
+<th>
+<code>tensor</code> shape</th>
+<th>
+<code>tensor</code> dimension</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>scalar</td>
+<td>$x$</td>
+<td><code>()</code></td>
+<td><code>0</code></td>
+</tr>
+<tr>
+<td>vector</td>
+<td>$(x_1, \dots, x_n)$</td>
+<td><code>(n,)</code></td>
+<td><code>1</code></td>
+</tr>
+<tr>
+<td>matrix</td>
+<td>$\begin{bmatrix}w_{1,1}&amp;\dots&amp;w_{1,n}\\\vdots&amp;\ddots&amp;\vdots\\w_{m,1}&amp;\dots&amp;w_{n,m}\end{bmatrix}$</td>
+<td><code>(m,n)</code></td>
+<td><code>2</code></td>
+</tr>
+<tr>
+<td>column vector</td>
+<td>$\begin{bmatrix}x_1\\\vdots\\x_n\end{bmatrix}$</td>
+<td><code>(n,1)</code></td>
+<td><code>2</code></td>
+</tr>
+<tr>
+<td>row vector</td>
+<td>$\begin{bmatrix}x_1&amp;\dots&amp;x_n\end{bmatrix}$</td>
+<td><code>(1,n)</code></td>
+<td><code>2</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="Mathematical-functions">
+<a class="anchor" href="#Mathematical-functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mathematical functions<a class="anchor-link" href="#Mathematical-functions"> </a>
+</h2>
+<ul>
+<li>We consider functions which are mappings from scalars, vectors, or matrices to scalars, vectors, or matrices.  It is generically denoted $y=f(x)$.</li>
+<li>A <strong>scalar</strong> function $y=f(x)$ is a function returning a scalar, i.e. $y$ is a scalar.  </li>
+<li>A <strong>vector-valued</strong> function $y=f(x)$ is a function returning a vector, i.e. $y$ is a vector.  We often write
+
+$$f(x) = (f_1(x), \dots, f_m(x))$$
+
+if the output is $m$-dimensional, where each of $f_1(x), \dots, f_m(x)$ is a scalar function.</li>
+<li>A <strong>univariate</strong> function $y=f(x)$ is a function depending on a scalar $x$.</li>
+<li>A <strong>multivariate</strong> function $y=f(x)$ is a function depending on a vector $x=(x_1, \dots, x_n)$.  </li>
+</ul>
+<p>In summary</p>
+<table>
+<thead>
+<tr>
+<th>$y=f(x)$</th>
+<th>scalar-valued</th>
+<th>vector-valued</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>univariate</strong></td>
+<td>$x$ is a scalar<br>$y$ is a scalar</td>
+<td>$x$ is a scalar<br>$y$ is a vector</td>
+</tr>
+<tr>
+<td><strong>multivariate</strong></td>
+<td>$x$ is a vector<br>$y$ is a scalar</td>
+<td>$x$is a vector<br>$y$ is a vector</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Differentiation">
+<a class="anchor" href="#Differentiation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Differentiation<a class="anchor-link" href="#Differentiation"> </a>
+</h2>
+<h3 id="Basic-definitions">
+<a class="anchor" href="#Basic-definitions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic definitions<a class="anchor-link" href="#Basic-definitions"> </a>
+</h3>
+<p>We do not recall the definitions for:</p>
+<ul>
+<li>the <strong>derivative</strong> $f'(x)$ of a scalar, uni-variate function $y=f(x)$ evaluated at a scalar $x$;</li>
+<li>the <strong>partial derivatives</strong> $\frac{\partial f}{\partial x_i}(x)$, $i=1, \dots, n$, of a scalar, multivariate function $y=f(x)$ with respect to the variables $x_1, \dots, x_n$, and evaluated at $x=(x_1, \dots, x_n)$.</li>
+</ul>
+<h3 id="Derivatives-of-vector-valued,-univariate-functions">
+<a class="anchor" href="#Derivatives-of-vector-valued,-univariate-functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Derivatives of vector-valued, univariate functions<a class="anchor-link" href="#Derivatives-of-vector-valued,-univariate-functions"> </a>
+</h3>
+<p>The <strong>derivative</strong> of a vector-valued, uni-variate function $y=f(x)$ evaluated at a scalar $x$ is the vertical concatenation of the derivatives of its component functions:
+
+$$f'(x) = \begin{bmatrix}f_1'(x)\\\vdots\\f_m'(x)\end{bmatrix}$$
+</p>
+<h3 id="Gradients">
+<a class="anchor" href="#Gradients" aria-hidden="true"><span class="octicon octicon-link"></span></a>Gradients<a class="anchor-link" href="#Gradients"> </a>
+</h3>
+<p>The <strong>gradient</strong> of a scalar-valued function $y=f(x)$, is the <em>row</em> vector of its partial derivatives:
+
+$$\nabla f(x) = \begin{bmatrix}\frac{\partial f}{\partial x_1}(x)&amp;\dots&amp;\frac{\partial f}{\partial x_n}(x)\end{bmatrix}$$
+
+with length $n$ if $x$ is $n$-dimensional: $x=(x_1, \dots, x_n)$.</p>
+<h3 id="Jacobians">
+<a class="anchor" href="#Jacobians" aria-hidden="true"><span class="octicon octicon-link"></span></a>Jacobians<a class="anchor-link" href="#Jacobians"> </a>
+</h3>
+<p>The <strong>Jacobian</strong> of a vector-valued, multivariate function $y=f(x)$ is the vertical concatenation of the gradients of the component functions $f_1, \dots, f_m$:
+$$J_f(x)
+\,=\,
+\begin{bmatrix}
+\nabla f_1(x)\\\vdots\\\nabla f_m(x)
+\end{bmatrix}
+\,=\,
+\begin{bmatrix}
+    \frac{\partial f_1}{\partial x_1}(x)&amp;\dots&amp;\frac{\partial f_1}{\partial x_n}(x)\\
+    \vdots&amp;\ddots&amp;\vdots\\
+    \frac{\partial f_m}{\partial x_1}(x)&amp;\dots&amp;\frac{\partial f_m}{\partial x_n}(x)
+\end{bmatrix}
+$$
+It is thus an $m$-by-$n$ matrix, i.e. with $m$ rows and $n$ columns.</p>
+<h4 id="Special-case:-$m=1$">
+<a class="anchor" href="#Special-case:-%24m=1%24" aria-hidden="true"><span class="octicon octicon-link"></span></a>Special case: $m=1$<a class="anchor-link" href="#Special-case:-%24m=1%24"> </a>
+</h4>
+<p>In case $m=1$, the Jacobian agrees with the gradient of a scalar, multivariate function:
+
+$$J_f(x) = \nabla f(x)$$
+</p>
+<h4 id="Special-case:-$n=1$">
+<a class="anchor" href="#Special-case:-%24n=1%24" aria-hidden="true"><span class="octicon octicon-link"></span></a>Special case: $n=1$<a class="anchor-link" href="#Special-case:-%24n=1%24"> </a>
+</h4>
+<p>In case $n=1$, the Jacobian agrees with the derivative of a vector-valued, univariate function.
+
+$$J_f(x) = \begin{bmatrix}f_1'(x)\\\vdots\\f_m'(x)\end{bmatrix}$$
+</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Vector-Jacobian-products">
+<a class="anchor" href="#Vector-Jacobian-products" aria-hidden="true"><span class="octicon octicon-link"></span></a>Vector-Jacobian products<a class="anchor-link" href="#Vector-Jacobian-products"> </a>
+</h2>
+<p>Given a vector-valued, multivariate function $y=f(x)$ and a <em>column</em> vector
+$v=\begin{bmatrix}v_1\\\vdots\\v_m\end{bmatrix}$,
+the <strong>vector-Jacobian product</strong> is the matrix multiplication
+$$v^\top J_f(x) \,=\,
+\begin{bmatrix}
+v_1&amp;\dots&amp;v_m
+\end{bmatrix}
+\begin{bmatrix}
+    \frac{\partial f_1}{\partial x_1}(x)&amp;\dots&amp;\frac{\partial f_1}{\partial x_n}(x)\\
+    \vdots&amp;\ddots&amp;\vdots\\
+    \frac{\partial f_m}{\partial x_1}(x)&amp;\dots&amp;\frac{\partial f_m}{\partial x_n}(x)
+\end{bmatrix}
+$$
+which is then a <em>row</em> vector of length $n$.</p>
+<h3 id="Special-case">
+<a class="anchor" href="#Special-case" aria-hidden="true"><span class="octicon octicon-link"></span></a>Special case<a class="anchor-link" href="#Special-case"> </a>
+</h3>
+<p>If $v^\top$ happens to be the gradient of a scalar-valued function $z=\ell(y)$ evaluated at $f(x)$, i.e. $v = \nabla \ell(y)$ where $y=f(x)$, then
+\begin{equation}
+v^\top J_f(x) 
+\,=\,\nabla (\ell\circ f)(x)
+\end{equation}
+In other words, $v^\top J_f(x)$ is the gradient of the composition of the function $\ell$ with the function $f$.
+</p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>The vector-Jacobian product can be generalized to cases where $x$ and $y$ are (mathematical) tensors of higher dimensions.  This generalization is in fact used in some of the examples of this post.
+</div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Application:-Gradients-of-vector-valued-functions">
+<a class="anchor" href="#Application:-Gradients-of-vector-valued-functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Application: Gradients of vector-valued functions<a class="anchor-link" href="#Application:-Gradients-of-vector-valued-functions"> </a>
+</h3>
+<p>If $y=f(x)=(f_1(x), \dots, f_m(x))$ is a vector-valued, multivariate function, one computes the gradients $\nabla f_1(x), \dots, \nabla f_m(x)$ one at a time, each time with a suitable vector $v$.  Indeed, fix $i$ between $1$ and $m$, and define $\ell_i(y)=y_i$ the function selecting the $i$-th coordinate of $y=(y_1, \dots, y_m)$, so that
+
+$$f_i(x) = \ell_i(f(x))\,.$$
+
+Noting that
+
+$$\nabla \ell_i(y) = \begin{bmatrix}0&amp;\cdots&amp;0&amp;1&amp;0&amp;\cdots&amp;0\end{bmatrix}$$
+
+where the only non-zero coordinate is in the $i$-th position, then 
+$$
+\begin{align}
+\nabla \ell_i(f(x))J_f(x)
+&amp; =
+\begin{bmatrix}0&amp;\cdots&amp;0&amp;1&amp;0&amp;\cdots&amp;0\end{bmatrix}
+\begin{bmatrix}
+    \frac{\partial f_1}{\partial x_1}(x)&amp;\dots&amp;\frac{\partial f_1}{\partial x_n}(x)\\
+    \vdots&amp;\ddots&amp;\vdots\\
+    \frac{\partial f_m}{\partial x_1}(x)&amp;\dots&amp;\frac{\partial f_m}{\partial x_n}(x)
+\end{bmatrix}\\
+&amp;=
+\begin{bmatrix}\frac{\partial f_i}{\partial x_1}(x)&amp;\dots&amp;\frac{\partial f_i}{\partial x_n}(x)\end{bmatrix}
+\end{align}
+$$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Application:-Derivatives-at-multiple-points">
+<a class="anchor" href="#Application:-Derivatives-at-multiple-points" aria-hidden="true"><span class="octicon octicon-link"></span></a>Application: Derivatives at multiple points<a class="anchor-link" href="#Application:-Derivatives-at-multiple-points"> </a>
+</h3>
+<p>To evaluate the derivative of a scalar, univariate function $f(x)$ at multiple sample points $x^{(1)}, \dots, x^{(N)}$, we create a <em>new</em>, vector-valued and multivariate function
+$$F(x)=\begin{bmatrix}f\left(x^{(1)}\right)\\ \vdots \\ f\left(x^{(N)}\right)\end{bmatrix}
+\qquad\textrm{where}\qquad
+x\,=\,(x^{(1)}, \dots, x^{(N)})\,.$$
+Thus, its Jacobian is
+$$J_F(x)=\begin{bmatrix}
+f'(x^{(1)})&amp;&amp;&amp;&amp;\\
+&amp;\ddots&amp;&amp;&amp;\\
+&amp;&amp;f'(x^{(j)})&amp;&amp;\\
+&amp;&amp;&amp;\ddots&amp;\\
+&amp;&amp;&amp;&amp;f'(x^{(N)})\end{bmatrix}
+$$
+where all off-diagonal terms are $0$.
+Thus, setting $v=\begin{bmatrix}1\\\vdots\\1\end{bmatrix}$, we obtain the gradient of $f$ evaluated at the $N$ sample points $x^{(1)}\,, \dots\,, x^{(N)}$:
+$$\begin{bmatrix}f'(x^{(1)})&amp;\dots&amp; f'(x^{(j)})&amp;\cdots&amp; f'(x^{(N)})\end{bmatrix}
+=\left[1\,,\dots\,,1\right]
+J_f(x)\,.$$
+The interpretation here is that the resulting row vector contains the derivative of $f$ at the samples $x^{(1)}$ to $x^{(N)}$.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="The-trick-with-sum()">
+<a class="anchor" href="#The-trick-with-sum()" aria-hidden="true"><span class="octicon octicon-link"></span></a>The trick with <code>sum()</code><a class="anchor-link" href="#The-trick-with-sum()"> </a>
+</h3>
+<p>The trick of adding <code>sum()</code> before calling <code>backward</code> differs with the previous application only in the order of operations performed: the summation is performed before differentiation.</p>
+<p>From a scalar, univariate function $y=f(x)$, construct a new scalar, multivariate function 
+
+$$G(x_1, \dots, x_N) = f(x_1) + \dots + f(x_N)$$
+
+Using the rules of vector calculus, the gradient of $G$ at an $n$-dimensional point $(x_1, \dots, x_N)$ is
+$$
+\begin{align}
+\nabla G(x) &amp; = \begin{bmatrix}\frac{\partial G}{\partial x_1}(x)&amp;\cdots&amp;\frac{\partial G}{\partial x_N}\end{bmatrix}\\
+&amp; = \begin{bmatrix}f'(x_1)&amp;\cdots&amp;f'(x_N)\end{bmatrix}
+\end{align}
+$$
+The interpretation here is that the resulting row vector contains the gradient of $G$ at the $N$-dimensional point $(x_1, \dots, x_N)$.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Computing-gradients-with-PyTorch">
+<a class="anchor" href="#Computing-gradients-with-PyTorch" aria-hidden="true"><span class="octicon octicon-link"></span></a>Computing gradients with <code>PyTorch</code><a class="anchor-link" href="#Computing-gradients-with-PyTorch"> </a>
+</h1>
+<p>A mathematical function is a mapping, which strictly speaking one should denote $f$.  The denotation $y=f(x)$ is simply to suggest that the typical input will be denoted $x$ and the corresponding output will be denoted $y$.  Otherwise, $y=f(x)$ actually asserts the identity between a value $y$ and the evaluation of the function $f$ at the value $x$.</p>
+<p>In <code>PyTorch</code>, the primary objects are <code>tensor</code>s, which can represent (mathematical) scalars, vectors, and matrices (as well as mathematical tensors).   The way a <code>PyTorch</code> function calculates a <code>tensor</code>, generically denoted <code>y</code> and called the output, from another <code>tensor</code>, generically denoted <code>x</code> and called the input, reflects the action of a mathematical function $f$ (or $y=f(x)$).</p>
+<p>Conversely, a mathematical function $f$ can be evaluated at $x$ using <code>PyTorch</code>, and furthermore <code>PyTorch</code> allows to evaluate the derivative or gradient of $f$ at $x$ via the method <code>backward</code>.  More specifically, the <code>backward</code> function performs vector-Jacobian products, where the vector correspond to the <code>gradient</code> argument.  The key point in using the <code>backward</code> is thus to understand how to choose the <code>gradient</code> argument.</p>
+<p>The mathematical preliminaries above show how <code>gradient</code> should be chosen.  There are two key points:</p>
+<ol>
+<li>
+<code>gradient</code> has the same shape as <code>y</code>;  </li>
+<li>
+<code>gradient</code> is populated with <code>0.</code>'s and <code>1.</code>'s, and the location of the <code>1.</code>'s corresponding to the inputs and outputs of interest.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Examples-revisited">
+<a class="anchor" href="#Examples-revisited" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples revisited<a class="anchor-link" href="#Examples-revisited"> </a>
+</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>The variable <code>v</code> is passed to the <code>gradient</code> argument in all our examples.
+</div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For the derivative of a scalar, univariate function evaluated a single point, we choose <code>gradient=torch.tensor(1.)</code>, which is the default value:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape of x         : </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape of y         : </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"gradient argument  : </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Shape of x         : ()
+Shape of y         : ()
+gradient argument  : 1.0
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that if <code>x</code> is cast as a <code>1</code>-dimensional <code>tensor</code>, then (in this particular example) <code>y</code> is also a <code>1</code>-dimensional <code>tensor</code>:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape of x         : </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape of y         : </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"gradient argument  : </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Shape of x         : (1,)
+Shape of y         : (1,)
+gradient argument  : tensor([1.])
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Similarly if <code>x</code> is cast as <code>2</code>-dimensional <code>tensor</code>:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">1.</span><span class="p">]],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape of x         : </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape of y         : </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"gradient argument  : </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Shape of x         : (1, 1)
+Shape of y         : (1, 1)
+gradient argument  : tensor([[1.]])
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For the derivative of a scalar, univariate function evaluated at multiple points, <code>gradient</code> contains all <code>1.</code>'s and is of same shape as <code>y</code>:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape of x         : </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape of y         : </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"gradient argument  : </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Shape of x         : (5,)
+Shape of y         : (5,)
+gradient argument  : tensor([1., 1., 1., 1., 1.])
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Casting <code>x</code> in a different shape changes the shape of <code>y</code>, and thus of <code>gradient</code>:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape of x         : </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape of y         : </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"gradient argument  : "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Shape of x         : (5, 1)
+Shape of y         : (5, 1)
+gradient argument  : 
+tensor([[1.],
+        [1.],
+        [1.],
+        [1.],
+        [1.]])
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For the derivative of a vector-valued, univariate function evaluated at a single point, the derivative of each component function is calculated one at a time, and <code>gradient</code> consists of all <code>0.</code>'s except for one <code>1.</code>, which is located at a position corresponding to the component function.  In the example below, the function is in fact <em>matrix-valued</em>, namely we calculate the derivative of
+
+$$f(x) = \begin{bmatrix}1&amp;x\\x^2&amp;x^3\\x^4&amp;x^5\end{bmatrix}\qquad \textrm{at}\quad x\,=\,1\,.$$
+</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collapse-show</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">x</span><span class="o">**</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)])</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ranges</span> <span class="o">=</span> <span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"x:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">y:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+<span class="n">derivatives</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">ranges</span><span class="p">):</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
+        
+    <span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">derivatives</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Derivatives:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">derivatives</span><span class="p">)</span>    
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>x:
+tensor(1.)
+
+y:
+tensor([[1., 1.],
+        [1., 1.],
+        [1., 1.]])
+
+Derivatives:
+tensor([[0., 1.],
+        [2., 3.],
+        [4., 5.]])
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>The use of <code>for</code> loops can be avoided.
+</div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For the gradient of a scalar, multivariate function evaluated at a single point, <code>gradient=torch.tensor(1.)</code>:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape of x         : </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape of y         : </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"gradient argument  : </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Shape of x         : (2,)
+Shape of y         : ()
+gradient argument  : 1.0
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In the following example, the input <code>x</code> is a <code>(3,2)</code>-tensor:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape of x: </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Shape of y: </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"gradient argument: </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"x:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"x.grad:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Shape of x: (3, 2)
+Shape of y: ()
+gradient argument: 1.0
+x:
+tensor([[0., 1.],
+        [2., 3.],
+        [4., 5.]], dtype=torch.float64)
+x.grad:
+tensor([[ 0.,  2.],
+        [ 4.,  6.],
+        [ 8., 10.]], dtype=torch.float64)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="antoinechoffrut/fastai-companion"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/fastai-companion/mathematics/2020/04/19/pytorch-backward-function-vector-Jacobian-product.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/fastai-companion/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/fastai-companion/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/fastai-companion/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>On neural nets, PyTorch, and fastai.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/antoinechoffrut" title="antoinechoffrut"><svg class="svg-icon grey"><use xlink:href="/fastai-companion/assets/minima-social-icons.svg#github"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
